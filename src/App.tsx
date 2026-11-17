@@ -161,7 +161,7 @@ const standardInitialTransactions: Transaction[] = [
     expectedDispatchDate: '2026-10-08',
     inspectionPeriod: '72 hours',
     agreementHistory: ['Buyer accepted · 2026-10-06 10:15', 'Seller accepted · 2026-10-06 11:42'],
-    paymentPartnerStatus: 'Demo status confirmed; no payment was processed.',
+    paymentPartnerStatus: 'Payment partner: Not integrated. Demo payment status: Confirmed (Sample).',
     dispatchEvidence: 'Packing list and dispatch note (sample evidence)',
     trackingNumber: 'DEMO-PP-2048',
     deliveredAt: 'Not yet delivered',
@@ -196,7 +196,7 @@ const standardInitialTransactions: Transaction[] = [
     expectedDispatchDate: '2026-09-21',
     inspectionPeriod: '48 hours',
     agreementHistory: ['Invitation sent · 2026-09-18 09:10', 'Awaiting seller acceptance'],
-    paymentPartnerStatus: 'Not started; agreement acceptance is pending.',
+    paymentPartnerStatus: 'Payment partner: Not integrated. Demo payment status: Pending.',
     dispatchEvidence: 'No dispatch evidence recorded',
     trackingNumber: 'Not assigned',
     deliveredAt: 'Not delivered',
@@ -228,7 +228,7 @@ const standardInitialTransactions: Transaction[] = [
     expectedDispatchDate: '2026-10-02',
     inspectionPeriod: '24 hours',
     agreementHistory: ['Buyer accepted · 2026-09-30 13:15', 'Seller accepted · 2026-09-30 13:45'],
-    paymentPartnerStatus: 'Demo status confirmed; no payment was processed.',
+    paymentPartnerStatus: 'Payment partner: Not integrated. Demo payment status: Confirmed (Sample).',
     dispatchEvidence: 'Sample dispatch note recorded',
     trackingNumber: 'DEMO-PP-2087',
     deliveredAt: '2026-10-10 15:20 (sample event)',
@@ -262,7 +262,7 @@ const standardInitialTransactions: Transaction[] = [
     expectedDispatchDate: '2026-08-25',
     inspectionPeriod: '48 hours',
     agreementHistory: ['Buyer accepted · 2026-08-22 12:15', 'Seller accepted · 2026-08-22 13:10'],
-    paymentPartnerStatus: 'Refund requested in demo record; partner decision not represented.',
+    paymentPartnerStatus: 'Payment partner: Not integrated. Demo refund request: Submitted (Sample).',
     dispatchEvidence: 'Sample handover acknowledgement',
     trackingNumber: 'LOCAL-PICKUP-PP-2124',
     deliveredAt: '2026-08-30 16:00 (sample event)',
@@ -373,7 +373,7 @@ function loadTransactions(): Transaction[] {
       expectedDispatchDate: item.expectedDispatchDate ?? base?.expectedDispatchDate ?? 'Not specified',
       inspectionPeriod: item.inspectionPeriod ?? base?.inspectionPeriod ?? 'Not specified',
       agreementHistory: Array.isArray(item.agreementHistory) ? item.agreementHistory : base?.agreementHistory ?? [],
-      paymentPartnerStatus: item.paymentPartnerStatus ?? base?.paymentPartnerStatus ?? 'No partner processing is active.',
+      paymentPartnerStatus: item.paymentPartnerStatus ?? base?.paymentPartnerStatus ?? 'Payment partner: Not integrated. Demo payment status: Pending.',
       dispatchEvidence: item.dispatchEvidence ?? base?.dispatchEvidence ?? 'No dispatch evidence recorded',
       trackingNumber: item.trackingNumber ?? base?.trackingNumber ?? 'Not assigned',
       deliveredAt: item.deliveredAt ?? base?.deliveredAt ?? 'Not delivered',
@@ -438,6 +438,24 @@ const industries = [
   'Other eligible B2B sectors',
 ]
 
+const businessCategories = [
+  {
+    value: 'goods',
+    label: 'Physical and wholesale goods',
+    options: ['Industrial supplies', 'Electronics', 'Textiles', 'Furniture', 'Agricultural and packaged products'],
+  },
+  {
+    value: 'services',
+    label: 'Professional and business services',
+    options: ['Software development', 'Consulting', 'Design', 'Marketing', 'Repair and installation'],
+  },
+  {
+    value: 'digital',
+    label: 'Digital goods and licences',
+    options: ['Software licences', 'Digital products', 'Templates', 'Online training'],
+  },
+]
+
 const disputeCategories = [
   'Non-delivery',
   'Incorrect quantity',
@@ -472,6 +490,12 @@ const formatCurrency = (value: number, currency = 'INR') =>
   }).format(value)
 
 const renderedYear = new Date().getFullYear()
+const demoEnvironmentLabel = 'DEMO ENVIRONMENT – SAMPLE DATA ONLY'
+const paymentStatusLabels: Record<string, string> = {
+  Pending: 'Demo payment status: Pending',
+  Confirmed: 'Demo payment status: Confirmed (Sample)',
+  'Refund Requested': 'Demo refund request: Submitted (Sample)',
+}
 const getCurrentTimestamp = () => new Date().toLocaleString()
 const makeActivityEntry = (title: string, detail: string) => ({
   date: getCurrentTimestamp(),
@@ -821,6 +845,9 @@ function MainLayout({ children }: { children: React.ReactNode }) {
         <div className="mb-5 rounded-2xl border border-sky-100 bg-[#EAF1FA] px-4 py-3 text-sm text-slate-700">
           “PactPal is currently a proposed startup platform and demonstration prototype. Payment collection, fund custody, conditional settlement and financial services will only be enabled after the necessary regulatory review, partner approval and formal onboarding.”
         </div>
+        <div className="mb-5 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-center text-xs font-bold uppercase tracking-[0.22em] text-amber-800">
+          {demoEnvironmentLabel}
+        </div>
       </div>
       {children}
       <footer className="mt-16 border-t border-slate-200 bg-white">
@@ -830,7 +857,7 @@ function MainLayout({ children }: { children: React.ReactNode }) {
               <img src={pactPalLogo} alt="PactPal — Trade with Confidence" className="h-auto w-44" />
             </div>
             <p className="text-sm text-slate-600">
-              Trade with Confidence. Every Transaction Matters.
+              B2B Transaction Coordination Platform.
             </p>
           </div>
           <div>
@@ -857,9 +884,11 @@ function MainLayout({ children }: { children: React.ReactNode }) {
           <div>
             <h4 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Contact</h4>
             <ul className="space-y-2 text-sm text-slate-600">
-              <li>hello@pactpal.demo</li>
-              <li>+91 98765 43210</li>
-              <li>Bengaluru, India</li>
+              <li>Founder: T. Vijay Anand</li>
+              <li>Email: vijayanandstr7@gmail.com</li>
+              <li>Phone: 6374330344</li>
+              <li>Project location: India</li>
+              <li>Project status: Pre-incorporation</li>
             </ul>
           </div>
         </div>
@@ -878,13 +907,13 @@ function LandingPage() {
         <div className="grid items-center gap-10 lg:grid-cols-[1.1fr,0.9fr]">
           <div>
             <div className="mb-4 inline-flex rounded-full border border-[#DDEBFF] bg-[#EEF5FF] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#2563EB]">
-              Secure B2B transaction platform
+              B2B Transaction Coordination Platform
             </div>
             <h1 className="max-w-xl text-4xl font-black tracking-tight text-[#0B1F3A] sm:text-5xl">
               Every Business Transaction Deserves Trust.
             </h1>
             <p className="mt-6 max-w-xl text-lg text-slate-600">
-              PactPal brings buyers and sellers together through transparent agreements, secure payment coordination, delivery confirmation and fair transaction management.
+              PactPal brings buyers and sellers together through transparent agreements, partner-managed payment workflows, delivery evidence and structured transaction coordination.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -915,14 +944,14 @@ function LandingPage() {
             <div className="rounded-[28px] bg-[#EAF1FA] p-4">
               <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Live transaction map</p>
-                  <h3 className="mt-1 text-xl font-semibold text-[#0B1F3A]">Order Flow</h3>
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Illustrative Transaction Workflow</p>
+                  <h3 className="mt-1 text-xl font-semibold text-[#0B1F3A]">Agreement, evidence and partner-managed payment flow</h3>
                 </div>
                 <div className="rounded-full bg-[#EAF1FA] px-3 py-1 text-xs font-semibold text-[#2563EB]">Demo status</div>
               </div>
 
               <div className="relative mt-6 space-y-5">
-                {[{ icon: Users, text: 'Buyer creates order', tone: 'bg-[#0B1F3A]' }, { icon: FileText, text: 'Agreement signed', tone: 'bg-[#163A63]' }, { icon: Landmark, text: 'Payment partner review', tone: 'bg-[#2563EB]' }, { icon: PackageCheck, text: 'Seller dispatches', tone: 'bg-[#16A34A]' }, { icon: CheckCircle2, text: 'Delivery confirmed', tone: 'bg-[#D97706]' }].map((step, index) => (
+                {[{ icon: Users, text: 'Buyer creates order', tone: 'bg-[#0B1F3A]' }, { icon: FileText, text: 'Agreement accepted', tone: 'bg-[#163A63]' }, { icon: Landmark, text: 'Payment partner review', tone: 'bg-[#2563EB]' }, { icon: PackageCheck, text: 'Seller dispatches', tone: 'bg-[#16A34A]' }, { icon: CheckCircle2, text: 'Evidence and inspection', tone: 'bg-[#D97706]' }].map((step, index) => (
                   <div key={step.text} className="relative flex items-center gap-4">
                     {index !== 4 && <div className="absolute left-[17px] top-10 h-8 w-px bg-slate-300" />}
                     <div className={`relative z-10 flex h-9 w-9 items-center justify-center rounded-full ${step.tone} text-white`}>
@@ -960,6 +989,7 @@ function LandingPage() {
         <div className="mb-8 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">Business transaction challenges</p>
           <h2 className="mt-3 text-3xl font-bold text-[#0B1F3A]">Where trust breaks down in B2B trade</h2>
+          <p className="mx-auto mt-4 max-w-3xl text-sm leading-6 text-slate-600">PactPal is designed to improve accountability through transparent transaction documentation, structured buyer and seller coordination, and a partner-managed payment model that remains clearly separate from PactPal’s operational responsibilities.</p>
         </div>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {[
@@ -1082,7 +1112,7 @@ function LandingPage() {
           <h2 className="mt-3 text-3xl font-bold text-[#0B1F3A]">Frequently asked questions</h2>
         </div>
         <div className="space-y-4">
-          {[{ q: 'Is PactPal a live finance product?', a: 'No. This prototype is a demonstration platform for evaluating transaction trust workflows and business model viability.' }, { q: 'Does PactPal collect funds today?', a: 'No. The prototype does not hold or process real customer funds. Financial services are presented as future, regulated capability.' }, { q: 'How are disputes handled?', a: 'Disputes are created, reviewed and managed through structured process steps that support evidence collection and responses.' }, { q: 'Is this integrated with Razorpay?', a: 'Not currently. The architecture page clearly indicates a proposed payment partner integration pending approval.' }].map((item) => (
+          {[{ q: 'Is PactPal a live finance product?', a: 'No. This prototype is a demonstration platform for evaluating transaction trust workflows and business model viability.' }, { q: 'Does PactPal collect funds today?', a: 'No. The prototype does not hold or process real customer funds. Financial services are presented as future, regulated capability.' }, { q: 'How are disputes handled?', a: 'Disputes are created, reviewed and managed through structured process steps that support evidence collection and responses.' }, { q: 'Is this integrated with a payment partner?', a: 'Not currently. The architecture page clearly indicates a proposed payment-partner workflow pending approval and legal review.' }].map((item) => (
             <div key={item.q} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="font-semibold text-[#172B45]">{item.q}</div>
               <p className="mt-2 text-sm leading-6 text-slate-600">{item.a}</p>
@@ -1102,9 +1132,10 @@ function LandingPage() {
             <div className="rounded-3xl bg-[#EAF1FA] p-6">
               <h3 className="text-xl font-semibold text-[#0B1F3A]">Reach out</h3>
               <div className="mt-4 space-y-3 text-sm text-slate-700">
-                <div>Email: hello@pactpal.demo</div>
-                <div>Phone: +91 98765 43210</div>
-                <div>Business inquiry: Partnership / legal / product</div>
+                <div>Founder: T. Vijay Anand</div>
+                <div>Email: vijayanandstr7@gmail.com</div>
+                <div>Phone: 6374330344</div>
+                <div>Project status: Pre-incorporation</div>
               </div>
               <Link to="/contact" className="mt-6 inline-flex rounded-full bg-[#0B1F3A] px-4 py-2 text-sm font-semibold text-white hover:bg-[#163A63]">
                 Send enquiry
@@ -1354,18 +1385,30 @@ function TransactionsPage({ transactions, disputes }: { transactions: Transactio
 }
 
 function TransactionDetailsModal({ transaction: tx, disputes, onClose }: { transaction: Transaction; disputes: Dispute[]; onClose: () => void }) {
+  const paymentSteps = [
+    { label: 'Agreement accepted', status: 'Complete', detail: 'Buyer and seller acceptance have been recorded in the demo workflow.' },
+    { label: 'Buyer payment initiation', status: 'Pending', detail: 'Demo payment status – Simulated. Payment partner – Not integrated.' },
+    { label: 'Simulated partner payment status', status: 'Pending', detail: 'Demo payment status – Simulated. Proposed settlement workflow – Subject to partner approval.' },
+    { label: 'Seller fulfilment', status: 'Complete', detail: 'Goods or services are recorded as fulfilled in the sample workflow.' },
+    { label: 'Delivery or service completion evidence', status: 'Complete', detail: 'Delivery evidence is captured in demo records and inspection can proceed.' },
+    { label: 'Buyer inspection', status: 'Pending', detail: 'Buyer inspection remains a required approval step before settlement resolution.' },
+    { label: 'Acceptance or dispute', status: tx.status === 'Disputed' ? 'Dispute' : 'Pending', detail: tx.status === 'Disputed' ? 'A dispute is currently open in the sample record.' : 'Acceptance or dispute is to be confirmed after delivery review.' },
+    { label: 'Proposed settlement / refund outcome', status: 'Pending', detail: 'Illustrative refund workflow – Not an actual refund. No real funds are moved in this prototype.' },
+  ]
+
   const sections = [
     { title: 'Buyer and seller', content: <div className="grid gap-4 sm:grid-cols-2"><DetailItem label="Buyer" value={tx.buyerName} /><DetailItem label="Seller" value={tx.sellerName} /></div> },
     { title: 'Product specifications and quantity', content: <div className="grid gap-4 sm:grid-cols-2"><DetailItem label="Product / service" value={tx.product} /><DetailItem label="Category" value={tx.category} /><DetailItem label="Agreed quantity" value={`${tx.quantity} units`} /><DetailItem label="Unit price" value={formatCurrency(tx.unitPrice, tx.currency)} /><DetailItem label="Supporting documents" value={tx.supportingDocuments ?? 'Not provided'} /><DetailItem label="Special conditions" value={tx.specialConditions ?? 'Not recorded'} /></div> },
     { title: 'Price and delivery terms', content: <div className="grid gap-4 sm:grid-cols-2"><DetailItem label="Total amount" value={formatCurrency(tx.amount, tx.currency)} /><DetailItem label="Delivery method" value={tx.deliveryMethod} /><DetailItem label="Delivery address" value={tx.deliveryAddress} /><DetailItem label="Expected dispatch" value={tx.expectedDispatchDate} /><DetailItem label="Expected delivery" value={tx.deliveryDeadline} /><DetailItem label="Inspection period" value={tx.inspectionPeriod} /></div> },
     { title: 'Agreement acceptance history', content: <TimelineList entries={tx.agreementHistory} /> },
-    { title: 'Payment partner processing status', content: <p className="text-sm leading-6 text-slate-600">{tx.paymentPartnerStatus} <span className="mt-2 block font-medium text-[#0B1F3A]">Recorded payment status: {tx.paymentStatus}. Prototype status only; no payment collection, fund handling or settlement is performed.</span></p> },
+    { title: 'Demo payment workflow', content: <div className="space-y-3">{paymentSteps.map((step) => <div key={step.label} className="rounded-xl border border-slate-200 bg-slate-50 p-3"><div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-sm text-[#172B45]">{step.label}</strong><span className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${step.status === 'Complete' ? 'bg-emerald-100 text-emerald-700' : step.status === 'Dispute' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{step.status}</span></div><p className="mt-2 text-sm leading-6 text-slate-600">{step.detail}</p></div>)}</div> },
+    { title: 'Payment partner processing status', content: <p className="text-sm leading-6 text-slate-600">{tx.paymentPartnerStatus} <span className="mt-2 block font-medium text-[#0B1F3A]">{paymentStatusLabels[tx.paymentStatus] ?? `Demo payment status: ${tx.paymentStatus}`}. Payment partner: Not integrated.</span><span className="mt-2 block text-slate-600">No payment collection, fund custody or real settlement is performed in this prototype.</span></p> },
     { title: 'Dispatch evidence and shipment tracking', content: <div className="grid gap-4 sm:grid-cols-2"><DetailItem label="Dispatch evidence" value={tx.dispatchEvidence} /><DetailItem label="Tracking reference" value={tx.trackingNumber} /><DetailItem label="Delivery status" value={tx.deliveryStatus} /><DetailItem label="Delivery confirmation" value={tx.deliveredAt} /></div> },
     { title: 'Buyer inspection results', content: <DetailItem label="Inspection result" value={tx.inspectionResult} /> },
     { title: 'Dispute history and resolution', content: disputes.length ? <div className="space-y-3">{disputes.map((item) => <div key={item.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4"><div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-sm text-[#172B45]">{item.id} · {item.title}</strong>{renderStatusPill(item.status)}</div><p className="mt-2 text-sm text-slate-600">{item.issue}</p><p className="mt-2 text-xs text-slate-500">Seller response: {item.sellerResponse}</p></div>)}</div> : <p className="text-sm text-slate-500">No dispute recorded for this transaction.</p> },
     { title: 'Complete activity timeline', content: <div className="space-y-3">{tx.activity.map((item, index) => <div key={`${item.date}-${index}`} className="flex gap-3"><div className="mt-1 h-2.5 w-2.5 flex-none rounded-full bg-[#2563EB]" /><div><div className="flex flex-wrap items-center gap-x-3 gap-y-1"><strong className="text-sm text-[#172B45]">{item.title}</strong><span className="text-xs text-slate-400">{item.date}</span></div><p className="mt-1 text-sm text-slate-600">{item.detail}</p></div></div>)}</div> },
   ]
-  return <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/60 p-3 sm:p-6" role="presentation"><section role="dialog" aria-modal="true" aria-labelledby="transaction-detail-title" className="mx-auto my-2 max-w-4xl rounded-3xl bg-[#F3F6FA] shadow-2xl sm:my-8"><header className="sticky top-0 z-10 rounded-t-3xl border-b border-slate-200 bg-white/95 p-5 backdrop-blur sm:p-7"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">Transaction overview · {tx.id}</p><h2 id="transaction-detail-title" className="mt-2 text-2xl font-bold text-[#0B1F3A] sm:text-3xl">{tx.title}</h2><div className="mt-3 flex flex-wrap items-center gap-3">{renderStatusPill(tx.status)}<span className="text-sm font-bold text-[#172B45]">{formatCurrency(tx.amount, tx.currency)}</span></div></div><button onClick={onClose} aria-label="Close transaction details" className="rounded-full bg-slate-100 p-2 text-slate-600 hover:bg-slate-200"><X className="h-5 w-5" /></button></div><TransactionProgress status={tx.status} /></header><div className="space-y-4 p-4 sm:p-7">{sections.map((section) => <article key={section.title} className="rounded-2xl border border-slate-200 bg-white p-5"><h3 className="mb-4 font-semibold text-[#0B1F3A]">{section.title}</h3>{section.content}</article>)}</div><div className="p-4 pt-0 text-center text-xs text-slate-500 sm:px-7">Demo records are illustrative only. No partner approval or real payment activity is implied.</div></section></div>
+  return <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/60 p-3 sm:p-6" role="presentation"><section role="dialog" aria-modal="true" aria-labelledby="transaction-detail-title" className="mx-auto my-2 max-w-4xl rounded-3xl bg-[#F3F6FA] shadow-2xl sm:my-8"><header className="sticky top-0 z-10 rounded-t-3xl border-b border-slate-200 bg-white/95 p-5 backdrop-blur sm:p-7"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">Transaction overview · {tx.id}</p><h2 id="transaction-detail-title" className="mt-2 text-2xl font-bold text-[#0B1F3A] sm:text-3xl">{tx.title}</h2><div className="mt-3 flex flex-wrap items-center gap-3">{renderStatusPill(tx.status)}<span className="text-sm font-bold text-[#172B45]">{formatCurrency(tx.amount, tx.currency)}</span></div></div><button onClick={onClose} aria-label="Close transaction details" className="rounded-full bg-slate-100 p-2 text-slate-600 hover:bg-slate-200"><X className="h-5 w-5" /></button></div><TransactionProgress status={tx.status} /></header><div className="space-y-4 p-4 sm:p-7">{sections.map((section) => <article key={section.title} className="rounded-2xl border border-slate-200 bg-white p-5"><h3 className="mb-4 font-semibold text-[#0B1F3A]">{section.title}</h3>{section.content}</article>)}</div><div className="p-4 pt-0 text-center text-xs text-slate-500 sm:px-7">DEMO ENVIRONMENT – SAMPLE DATA ONLY</div></section></div>
 }
 
 function DetailItem({ label, value }: { label: string; value: string }) {
@@ -1383,6 +1426,7 @@ function CreateTransactionPage({ onCreate }: { onCreate: (transaction: Transacti
     title: '',
     buyerName: '',
     sellerName: '',
+    categoryGroup: '',
     category: '',
     description: '',
     quantity: '',
@@ -1399,6 +1443,7 @@ function CreateTransactionPage({ onCreate }: { onCreate: (transaction: Transacti
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  const selectedBusinessCategory = businessCategories.find((item) => item.value === form.categoryGroup)
   const totalAmount = Number(form.quantity || 0) * Number(form.unitPrice || 0)
   const totalSteps = 6
 
@@ -1409,8 +1454,9 @@ function CreateTransactionPage({ onCreate }: { onCreate: (transaction: Transacti
       if (!form.buyerName) nextErrors.buyerName = 'Buyer details are required.'
       if (!form.sellerName) nextErrors.sellerName = 'Seller details are required.'
     }
-    if (step === 2 && (!form.category || !form.description)) {
-      if (!form.category) nextErrors.category = 'Category is required.'
+    if (step === 2 && (!form.categoryGroup || !form.category || !form.description)) {
+      if (!form.categoryGroup) nextErrors.categoryGroup = 'Business category is required.'
+      if (!form.category) nextErrors.category = 'Subcategory is required.'
       if (!form.description) nextErrors.description = 'Product or service description is required.'
     }
     if (step === 3 && (!form.quantity || !form.unitPrice || Number(form.quantity) <= 0 || Number(form.unitPrice) <= 0)) {
@@ -1461,7 +1507,7 @@ function CreateTransactionPage({ onCreate }: { onCreate: (transaction: Transacti
       deliveryStatus: 'Awaiting Dispatch',
       currentStage: 'Draft',
       status: 'Draft',
-      category: form.category,
+      category: form.category || form.categoryGroup || 'Other',
       quantity: Number(form.quantity),
       unitPrice: Number(form.unitPrice),
       deliveryMethod: form.deliveryMethod,
@@ -1516,15 +1562,21 @@ function CreateTransactionPage({ onCreate }: { onCreate: (transaction: Transacti
             <Field label="Transaction title" error={errors.title}><input value={form.title} onChange={(e) => handleChange('title', e.target.value)} className="input" placeholder="Precision Motor Assembly Kit" /></Field>
             <Field label="Buyer details" error={errors.buyerName}><input value={form.buyerName} onChange={(e) => handleChange('buyerName', e.target.value)} className="input" placeholder="Bharat Fabricators Ltd." /></Field>
             <Field label="Seller details" error={errors.sellerName}><input value={form.sellerName} onChange={(e) => handleChange('sellerName', e.target.value)} className="input" placeholder="Metro Components Works" /></Field>
-            <Field label="Currency"><select value={form.currency} onChange={(e) => handleChange('currency', e.target.value)} className="input"><option>INR</option><option>USD</option></select></Field>
+            <Field label="Currency"><select value={form.currency} onChange={(e) => handleChange('currency', e.target.value)} className="input"><option>INR</option></select></Field>
           </div>
         )}
 
         {step === 2 && (
           <div className="grid gap-5 md:grid-cols-2">
-            <Field label="Product/service category" error={errors.category}><select value={form.category} onChange={(e) => handleChange('category', e.target.value)} className="input"><option value="">Select</option>{industries.map((industry) => <option key={industry} value={industry}>{industry}</option>)}</select></Field>
+            <Field label="Business category" error={errors.categoryGroup}><select value={form.categoryGroup} onChange={(e) => {
+              handleChange('categoryGroup', e.target.value)
+              setForm((prev) => ({ ...prev, category: '' }))
+            }} className="input"><option value="">Select</option>{businessCategories.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></Field>
+            {selectedBusinessCategory && (
+              <Field label="Subcategory" error={errors.category}><select value={form.category} onChange={(e) => handleChange('category', e.target.value)} className="input"><option value="">Select</option>{selectedBusinessCategory.options.map((option) => <option key={option} value={option}>{option}</option>)}</select></Field>
+            )}
             <Field label="Supporting documents" className="md:col-span-2"><input value={form.supportingDocuments} onChange={(e) => handleChange('supportingDocuments', e.target.value)} className="input" placeholder="Spec sheet, quality certificate, etc." /></Field>
-            <Field label="Product or service description" className="md:col-span-2" error={errors.description}><textarea value={form.description} onChange={(e) => handleChange('description', e.target.value)} className="input min-h-[120px]" placeholder="Describe the product or service" /></Field>
+            <Field label={selectedBusinessCategory ? (selectedBusinessCategory.value === 'goods' ? 'Product details, specifications and dispatch requirements' : selectedBusinessCategory.value === 'services' ? 'Scope of work, milestones and deliverables' : 'Product or licence details, activation and usage terms') : 'Product or service description'} className="md:col-span-2" error={errors.description}><textarea value={form.description} onChange={(e) => handleChange('description', e.target.value)} className="input min-h-[120px]" placeholder={selectedBusinessCategory ? (selectedBusinessCategory.value === 'goods' ? 'Describe the product details, quantity, specifications, dispatch details, delivery location and tracking requirements.' : selectedBusinessCategory.value === 'services' ? 'Describe the scope of work, milestones, deliverables, approval criteria and acceptance conditions.' : 'Describe the product or licence, access activation, delivery evidence and usage or acceptance criteria.') : 'Describe the product or service'} /></Field>
           </div>
         )}
 
@@ -1868,30 +1920,40 @@ function PaymentArchitecturePage() {
       <div className="mb-8 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">Payment architecture</p>
         <h1 className="mt-3 text-4xl font-black text-[#0B1F3A]">Proposed payment architecture</h1>
-        <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-600">Proposed only; subject to regulatory review and payment partner approval. No integration is active and no funds are handled by PactPal in this prototype.</p>
+        <p className="mx-auto mt-3 max-w-3xl text-sm leading-6 text-slate-600">This prototype illustrates a proposed business arrangement. PactPal is not the payment operator and no customer funds are held, collected or settled by PactPal in the demo environment.</p>
       </div>
       <PaymentFlowDiagram />
 
       <div className="mt-8 grid gap-6 md:grid-cols-2">
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="text-xl font-semibold text-[#172B45]">Platform role</h3>
-          <p className="mt-4 text-sm leading-6 text-slate-600">
-            PactPal intends to act as a transaction-management and technology platform. The financial partner would handle funds under its authorised and approved arrangements. This prototype does not imply any regulatory approval or current operational payment capability.
-          </p>
-        </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="text-xl font-semibold text-[#172B45]">Proposed requirements</h3>
-          <ul className="mt-4 space-y-2 text-sm text-slate-600">
-            <li>• Payment collection</li>
-            <li>• Seller linked accounts</li>
-            <li>• Seller onboarding</li>
-            <li>• Permitted delayed settlement</li>
-            <li>• Conditional settlement, if supported</li>
-            <li>• Refunds and reversals</li>
-            <li>• Payment webhooks and reconciliation</li>
-            <li>• Transaction status updates</li>
+          <h3 className="text-xl font-semibold text-[#172B45]">PactPal responsibilities</h3>
+          <ul className="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+            <li>• Transaction documentation.</li>
+            <li>• Agreement management.</li>
+            <li>• Delivery evidence.</li>
+            <li>• Inspection workflow.</li>
+            <li>• Dispute coordination.</li>
+            <li>• Displaying partner-confirmed payment status.</li>
           </ul>
         </div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 className="text-xl font-semibold text-[#172B45]">Payment partner responsibilities</h3>
+          <ul className="mt-4 space-y-2 text-sm leading-6 text-slate-600">
+            <li>• Payment collection.</li>
+            <li>• Fund handling.</li>
+            <li>• Permitted settlement arrangements.</li>
+            <li>• Refunds and reversals.</li>
+            <li>• Payment reconciliation.</li>
+            <li>• Merchant onboarding and applicable KYC.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
+        <h3 className="text-xl font-semibold text-[#172B45]">Important limitation</h3>
+        <p className="mt-3 text-sm leading-6 text-slate-700">
+          Conditional settlement, delivery-linked settlement, milestone-based settlement and escrow arrangements are not confirmed PactPal capabilities. These are proposed options requiring specific payment-partner approval, contractual confirmation and legal review.
+        </p>
       </div>
       <IntegrationQuestions />
     </motion.div>
@@ -1900,18 +1962,18 @@ function PaymentArchitecturePage() {
 
 function PaymentFlowDiagram() {
   const stages = [
-    { title: 'Buyer', detail: 'Creates a transaction and reviews terms' },
-    { title: 'PactPal transaction coordination', detail: 'Records agreement, milestones and evidence' },
-    { title: 'Authorised payment partner', detail: 'Handles funds only under approved arrangements' },
-    { title: 'Seller fulfilment', detail: 'Dispatches goods or completes services' },
-    { title: 'Buyer inspection', detail: 'Confirms delivery against agreed terms' },
-    { title: 'Partner-managed settlement / refund', detail: 'According to approved partner arrangements' },
+    { title: 'Buyer', detail: 'Creates the transaction and reviews commercial terms' },
+    { title: 'PactPal', detail: 'Maintains agreement records, evidence and workflow status' },
+    { title: 'Payment partner', detail: 'Collects funds and performs approved settlement actions' },
+    { title: 'Seller fulfilment', detail: 'Dispatches goods or completes services and records evidence' },
+    { title: 'Buyer inspection', detail: 'Confirms delivery or service completion against acceptance conditions' },
+    { title: 'Settlement or refund outcome', detail: 'Proposed partner-managed outcome once approved by the relevant partner' },
   ]
-  return <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl font-semibold text-[#172B45]">Proposed transaction and payment flow</h2><span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800">Proposed · pending approval</span></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{stages.map((stage, index) => <div key={stage.title} className="relative rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="flex items-start gap-3"><span className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-[#0B1F3A] text-xs font-bold text-white">{index + 1}</span><div><h3 className="font-semibold text-[#172B45]">{stage.title}</h3><p className="mt-2 text-sm leading-5 text-slate-600">{stage.detail}</p></div></div></div>)}</div><p className="mt-5 rounded-xl border border-sky-100 bg-[#EAF1FA] p-4 text-sm leading-6 text-slate-700">PactPal is a proposed technology and transaction-coordination layer. It does not independently hold customer funds; any collection, settlement or refund would be performed by an authorised partner under arrangements approved for the use case.</p></div>
+  return <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl font-semibold text-[#172B45]">Proposed transaction and payment flow</h2><span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800">Proposed · pending approval</span></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{stages.map((stage, index) => <div key={stage.title} className="relative rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="flex items-start gap-3"><span className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-[#0B1F3A] text-xs font-bold text-white">{index + 1}</span><div><h3 className="font-semibold text-[#172B45]">{stage.title}</h3><p className="mt-2 text-sm leading-5 text-slate-600">{stage.detail}</p></div></div></div>)}</div><p className="mt-5 rounded-xl border border-sky-100 bg-[#EAF1FA] p-4 text-sm leading-6 text-slate-700">PactPal is a transaction-coordination platform. It does not independently hold, pool, safeguard or transfer customer funds. Any collection, settlement or refund must be performed by an authorised payment partner under permitted and approved arrangements.</p></div>
 }
 
 function IntegrationQuestions() {
-  return <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"><h3 className="text-xl font-semibold text-[#172B45]">Payment partner requirements and integration questions</h3><ul className="mt-4 grid gap-3 text-sm leading-6 text-slate-600 md:grid-cols-2"><li>• Which seller onboarding and linked-account models are available for the intended marketplace flow?</li><li>• Are delayed or conditional settlements permitted for this business model and transaction category?</li><li>• Which authorization, capture, refund and reversal flows are supported?</li><li>• What webhook signing, retry and reconciliation requirements apply?</li><li>• Which legal, compliance and operational prerequisites must be satisfied before launch?</li><li>• How should order disputes map to permitted payment-state transitions?</li></ul></div>
+  return <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"><h3 className="text-xl font-semibold text-[#172B45]">Payment partner requirements and integration questions</h3><ul className="mt-4 grid gap-3 text-sm leading-6 text-slate-600 md:grid-cols-2"><li>• Which seller onboarding and linked-account models are suitable for the intended marketplace flow?</li><li>• Are delayed or conditional settlements permitted for this business model and transaction category?</li><li>• Which authorization, capture, refund and reversal flows are supported?</li><li>• What webhook signing, retry and reconciliation requirements apply?</li><li>• Which legal, compliance and operational prerequisites must be satisfied before launch?</li><li>• How should order disputes map to permitted payment-state transitions?</li></ul></div>
 }
 
 function PartnershipPage() {
